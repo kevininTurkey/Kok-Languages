@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dari Practice — B1→B2</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f0;--surface:#f8faf6;--surface2:#e8ede5;--border:#cdd4c8;--text:#1a1714;--muted:#6b6456;--dim:#9e9488;--accent:#1D9E75;--accent-l:#e1f5ee;--accent-d:#085041;--gold:#8a6e2f;--gold-l:#f5edd8;--ok:#2d6e45;--ok-l:#e8f5ee;--err:#8e2d2d;--err-l:#f9e8e8;--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:660px;margin:0 auto;padding:36px 20px}
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+header h1{font-family:'Spectral',serif;font-size:1.6rem;font-weight:600}
+header p{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+.badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.badge{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:.78rem;font-family:'DM Mono',monospace;color:var(--muted)}
+.badge span{color:var(--text);font-weight:500}
+.key-screen{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;margin-bottom:20px}
+.key-screen h2{font-family:'Spectral',serif;font-size:1.2rem;font-weight:600;margin-bottom:8px}
+.key-screen p{font-size:.84rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.key-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--text);outline:none;margin-bottom:10px}
+.key-btn{width:100%;padding:13px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;font-family:'Spectral',serif;font-size:1rem;font-weight:600;cursor:pointer}
+.key-btn:hover{background:var(--accent-d)}
+.key-note{font-size:.76rem;color:var(--dim);margin-top:10px;line-height:1.5}
+.key-saved{background:var(--ok-l);border:1px solid rgba(45,110,69,.2);border-radius:var(--r);padding:10px 14px;font-size:.82rem;color:var(--ok);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.key-reset{background:none;border:none;color:var(--err);font-size:.76rem;cursor:pointer;text-decoration:underline}
+.goal-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.goal-text{flex:1}.goal-text strong{font-size:.84rem;display:block;margin-bottom:3px}.goal-text small{font-size:.76rem;color:var(--muted)}
+.gbar-wrap{width:90px;background:var(--surface2);border-radius:3px;height:5px;overflow:hidden}
+.gbar-fill{height:5px;background:var(--accent);border-radius:3px;transition:width .4s}
+.gcount{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent);min-width:32px;text-align:right}
+.goal-bar.done .gbar-fill{background:var(--ok)}.goal-bar.done .gcount{color:var(--ok)}
+.config{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px}
+.slabel{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-weight:500;margin-bottom:11px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:18px}
+.tbtn{padding:9px 11px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;text-align:left;line-height:1.3}
+.tbtn:hover{border-color:var(--accent);color:var(--text)}.tbtn.sel{border-color:var(--accent);background:var(--accent-l);color:var(--accent-d);font-weight:500}
+.trow{display:flex;gap:7px;flex-wrap:wrap}
+.xbtn{flex:1;min-width:100px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.78rem;text-align:center}
+.xbtn:hover{border-color:var(--accent);color:var(--text)}.xbtn.sel{border-color:var(--accent);background:var(--accent-l);color:var(--accent-d);font-weight:500}
+.genbtn{width:100%;padding:14px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;font-family:'Spectral',serif;font-size:1rem;font-weight:600;cursor:pointer;margin-top:14px}
+.genbtn:hover{background:var(--accent-d)}
+.loading{text-align:center;padding:50px 20px;display:none}.loading.on{display:block}
+.spin{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 14px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.loading p{font-family:'Spectral',serif;font-style:italic;color:var(--muted);font-size:.9rem}
+.session{display:none}
+.sess-hdr{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.spbar{flex:1;background:var(--surface2);border-radius:3px;height:5px;overflow:hidden}
+.spbar-fill{height:5px;background:var(--accent);border-radius:3px;transition:width .4s}
+.sctr{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--muted);white-space:nowrap}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:12px;transition:border-color .25s}
+.qcard.ok{border-color:var(--ok);background:var(--ok-l)}.qcard.bad{border-color:var(--err);background:var(--err-l)}
+.qmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.qtype{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.qtag{font-size:.68rem;padding:3px 8px;border-radius:10px;background:var(--accent-l);color:var(--accent)}
+.qprompt{font-family:'Spectral',serif;font-size:1.1rem;line-height:1.65;color:var(--text);margin-bottom:6px}
+.qprompt .blank{display:inline-block;border-bottom:2px solid var(--accent);min-width:65px;height:1em;vertical-align:bottom;margin:0 3px}
+.qsub{font-size:.8rem;color:var(--muted);font-style:italic;font-family:'Spectral',serif;margin-bottom:14px}
+.passage{background:var(--surface2);border-left:3px solid var(--border);padding:12px 14px;border-radius:0 var(--r) var(--r) 0;font-family:'Spectral',serif;font-size:.9rem;line-height:1.7;color:var(--muted);margin-bottom:12px;display:none}
+.passage.on{display:block}
+.finput{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-family:'Spectral',serif;font-size:.95rem;color:var(--text);outline:none}
+.finput.ok{border-color:var(--ok);background:var(--ok-l)}.finput.bad{border-color:var(--err);background:var(--err-l)}
+.winput{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-family:'Spectral',serif;font-size:.92rem;color:var(--text);outline:none;resize:vertical;min-height:74px}
+.mcopts{display:flex;flex-direction:column;gap:7px}
+.mcopt{padding:11px 14px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Spectral',serif;font-size:.9rem;text-align:left;display:flex;align-items:center;gap:9px;line-height:1.4}
+.mcopt:hover:not(:disabled){border-color:var(--muted);background:var(--surface2)}
+.mcopt.ok{border-color:var(--ok);background:var(--ok-l);color:var(--ok)}.mcopt.bad{border-color:var(--err);background:var(--err-l);color:var(--err)}.mcopt:disabled{cursor:default}
+.mcletter{width:20px;height:20px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-family:'DM Mono',monospace;flex-shrink:0;color:var(--dim)}
+.gram-wrap{margin-top:14px}
+.gram-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:.75rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+.gram-btn:hover{border-color:var(--gold);color:var(--gold)}
+.gram-panel{display:none;background:var(--gold-l);border:1px solid rgba(138,110,47,.2);border-radius:var(--r);padding:15px;margin-top:7px}
+.gram-panel.on{display:block}
+.gram-quick{font-size:.84rem;line-height:1.6;color:var(--text);margin-bottom:9px;font-family:'Spectral',serif}
+.expbtn{background:none;border:none;color:var(--gold);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;font-weight:500}
+.gram-deep{display:none;margin-top:11px;padding-top:11px;border-top:1px solid rgba(138,110,47,.2);font-size:.82rem;line-height:1.7;color:var(--muted);font-family:'Spectral',serif}
+.gram-deep.on{display:block}
+.exrow{display:flex;gap:10px;margin:5px 0;padding:7px 9px;background:rgba(138,110,47,.06);border-radius:5px;flex-wrap:wrap}
+.exrow .tr{color:var(--text);font-weight:500;flex:1;min-width:120px}.exrow .en{color:var(--muted);font-style:italic;flex:1;min-width:100px}
+.actrow{display:flex;gap:8px;margin-bottom:10px}
+.chkbtn{flex:1;padding:11px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer}
+.chkbtn:hover{opacity:.85}.chkbtn:disabled{opacity:.35;cursor:not-allowed}
+.revbtn{padding:11px 14px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;white-space:nowrap}
+.revbtn:hover{border-color:var(--muted);color:var(--text)}
+.fb{padding:12px 14px;border-radius:var(--r);margin-bottom:10px;font-size:.84rem;line-height:1.5;display:none}
+.fb.ok{background:var(--ok-l);border:1px solid rgba(45,110,69,.2);color:var(--ok);display:block}
+.fb.bad{background:var(--err-l);border:1px solid rgba(142,45,45,.2);color:var(--err);display:block}
+.fb.neu{background:var(--surface2);border:1px solid var(--border);color:var(--muted);display:block}
+.fb-ans{font-weight:600;font-family:'Spectral',serif;margin-top:2px;color:var(--text)}
+.fb-exp{font-style:italic;margin-top:5px;color:var(--muted);font-family:'Spectral',serif;font-size:.8rem}
+.ssrow{display:none;gap:7px;margin-bottom:10px}.ssrow.on{display:flex}
+.ssbtn{flex:1;padding:9px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;text-align:center}
+.aifb{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:10px;font-size:.83rem;line-height:1.6;font-family:'Spectral',serif;color:var(--muted)}
+.aifb.on{display:block}
+.aifb .aiscore{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);margin-bottom:5px}
+.aifb .aitip{margin-top:6px;color:var(--gold);font-size:.78rem}
+
+.override-btn{display:none;margin-top:8px;width:100%;padding:8px;border:1px dashed var(--gold);border-radius:var(--r);background:transparent;color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.78rem}
+.override-btn.show{display:block}
+.override-btn:hover{background:var(--gold-l)}
+.alpha-screen{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.alpha-tabs{display:flex;gap:6px;margin-bottom:20px}
+.alpha-tab{flex:1;padding:9px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;text-align:center}
+.alpha-tab.on{border-color:var(--accent);background:var(--accent-l);color:var(--accent-d);font-weight:500}
+.alpha-view{display:none}.alpha-view.on{display:block}
+.flash-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:40px 24px;text-align:center;margin-bottom:16px;cursor:pointer;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .2s}
+.flash-card:hover{border-color:var(--accent)}
+.flash-letter{font-size:3.5rem;line-height:1;margin-bottom:10px;direction:rtl}
+.flash-name{font-size:1rem;font-weight:500;color:var(--text);margin-bottom:4px}
+.flash-sound{font-size:.85rem;color:var(--muted);font-style:italic}
+.flash-nav{display:flex;gap:8px;margin-bottom:16px}
+.flash-btn{flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem}
+.flash-btn:hover{border-color:var(--accent);color:var(--accent)}
+.flash-counter{text-align:center;font-size:.78rem;color:var(--dim);font-family:'DM Mono',monospace;margin-bottom:16px}
+.alpha-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.alpha-cell{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center}
+.ac-letter{font-size:1.6rem;direction:rtl;margin-bottom:4px}
+.ac-name{font-size:.72rem;font-weight:500;color:var(--text)}
+.ac-sound{font-size:.68rem;color:var(--muted);font-style:italic}
+.num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+.num-cell{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 8px;text-align:center}
+.nc-script{font-size:1.8rem;direction:rtl;margin-bottom:4px}
+.nc-latin{font-size:.85rem;font-weight:500;color:var(--text)}
+.nc-word{font-size:.7rem;color:var(--muted)}
+.back-btn{width:100%;padding:11px;border:1px solid var(--border);border-radius:var(--r);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;margin-top:8px}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nxtbtn{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--r);background:transparent;color:var(--muted);font-family:'Spectral',serif;font-size:.9rem;font-weight:600;cursor:pointer;display:none}
+.nxtbtn.on{display:block}.nxtbtn:hover{background:var(--surface2);color:var(--text);border-color:var(--muted)}
+.errmsg{background:var(--err-l);border:1px solid rgba(142,45,45,.2);border-radius:var(--r);padding:12px 14px;font-size:.82rem;color:var(--err);margin-bottom:12px;display:none}
+.errmsg.on{display:block}
+.results{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px 26px;text-align:center}
+.results.on{display:block}
+.res-title{font-family:'Spectral',serif;font-size:1.6rem;font-weight:600;margin-bottom:4px}
+.res-sub{color:var(--muted);font-size:.84rem;font-family:'Spectral',serif;font-style:italic;margin-bottom:22px}
+.res-stats{display:flex;justify-content:center;gap:38px;margin-bottom:18px}
+.rval{font-family:'Spectral',serif;font-size:2.2rem;font-weight:600;color:var(--accent);display:block;line-height:1;margin-bottom:3px}
+.rlbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.goal-win{background:var(--ok-l);border:1px solid rgba(45,110,69,.2);color:var(--ok);padding:11px 14px;border-radius:var(--r);font-size:.84rem;margin-bottom:16px;display:none}
+.goal-win.on{display:block}
+.bdlist{text-align:left;margin-bottom:20px}
+.bditem{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.8rem;font-family:'Spectral',serif}
+.bditem:last-child{border-bottom:none}
+.bdq{flex:1;color:var(--muted)}.bdres{font-weight:600;font-size:.72rem;font-family:'DM Mono',monospace}
+.bdres.c{color:var(--ok)}.bdres.p{color:var(--gold)}.bdres.w{color:var(--err)}
+.res-btns{display:flex;gap:9px;justify-content:center}
+.btnback{padding:10px 20px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem}
+.btnback:hover{border-color:var(--muted);color:var(--text)}
+.btnagain{padding:10px 20px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500}
+.btnagain:hover{opacity:.85}
+@media(max-width:500px){.tgrid{grid-template-columns:1fr}.res-stats{gap:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><h1>Dari Practice</h1><p>A2+ → B1 · Afghan Dari</p></div>
+  <div class="badges">
+    <div class="badge">🔥 <span id="stk">0</span> day streak</div>
+    <div class="badge">Today: <span id="tc">0</span>/10</div>
+  </div>
+</header>
+
+<div id="key-screen">
+  <div class="key-screen">
+    <h2>Enter your Anthropic API Key</h2>
+    <p>Your key is stored only in this browser and sent directly to Anthropic. It is never shared anywhere else. You only need to enter it once.</p>
+    <input class="key-input" type="password" id="key-input" placeholder="sk-ant-..." />
+    <button class="key-btn" onclick="saveKey()">Save and start</button>
+    <p class="key-note">Get your key at console.anthropic.com under API Keys. To remove it later, use the Reset key link that appears after saving.</p>
+  </div>
+</div>
+
+
+<div class="alpha-screen" id="alphaScreen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div>
+      <div style="font-family:'Spectral',serif;font-size:1.1rem;font-weight:600">Dari Script</div>
+      <div style="font-size:.78rem;color:var(--muted)">Alphabet and numbers</div>
+    </div>
+  </div>
+  <div class="alpha-tabs">
+    <button class="alpha-tab on" onclick="switchAlphaTab('flash')">Flashcards</button>
+    <button class="alpha-tab" onclick="switchAlphaTab('chart')">Full Chart</button>
+    <button class="alpha-tab" onclick="switchAlphaTab('nums')">Numbers</button>
+  </div>
+
+  <!-- FLASHCARD VIEW -->
+  <div class="alpha-view on" id="alpha-flash">
+    <div class="flash-card" onclick="flipFlash()">
+      <div class="flash-letter" id="flashLetter"></div>
+      <div class="flash-name" id="flashName"></div>
+      <div class="flash-sound" id="flashSound"></div>
+    </div>
+    <div class="flash-counter" id="flashCounter"></div>
+    <div class="flash-nav">
+      <button class="flash-btn" onclick="moveFlash(-1)">Previous</button>
+      <button class="flash-btn" onclick="moveFlash(1)">Next</button>
+    </div>
+  </div>
+
+  <!-- CHART VIEW -->
+  <div class="alpha-view" id="alpha-chart">
+    <div class="alpha-grid" id="alphaGrid"></div>
+  </div>
+
+  <!-- NUMBERS VIEW -->
+  <div class="alpha-view" id="alpha-nums">
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Dari/Persian numerals with Latin equivalents</div>
+    <div class="num-grid" id="numGrid"></div>
+  </div>
+
+  <button class="back-btn" onclick="closeAlpha()">Back to practice topics</button>
+</div>
+<div class="key-saved" id="key-saved" style="display:none">
+  <span>API key saved</span>
+  <button class="key-reset" onclick="resetKey()">Reset key</button>
+</div>
+<div class="goal-bar" id="goalbar" style="display:none">
+  <div style="font-size:1rem">🎯</div>
+  <div class="goal-text"><strong>Daily Goal</strong><small id="goaldesc">Complete 10 questions</small></div>
+  <div class="gbar-wrap"><div class="gbar-fill" id="gfill" style="width:0%"></div></div>
+  <div class="gcount" id="gcount">0/10</div>
+</div>
+<div class="errmsg" id="errmsg">Could not connect. Check your API key using Reset key above, then try again.</div>
+<div class="config" id="cfg" style="display:none">
+  <div class="slabel">Grammar Topic</div>
+  <div class="tgrid" id="tgrid"></div>
+  <div class="slabel">Exercise Type</div>
+  <div class="trow" id="trow"></div>
+  <button class="genbtn" onclick="startSess()">Generate Session</button>
+</div>
+<div class="loading" id="loading"><div class="spin"></div><p id="loadmsg">Generating your questions...</p></div>
+<div class="session" id="session">
+  <div class="sess-hdr">
+    <div class="spbar"><div class="spbar-fill" id="spfill" style="width:0%"></div></div>
+    <div class="sctr" id="sctr">1/10</div>
+  </div>
+  <div class="qcard" id="qcard">
+    <div class="qmeta"><div class="qtype" id="qtype"></div><div class="qtag" id="qtag"></div></div>
+    <div class="passage" id="passage"></div>
+    <div class="qprompt" id="qprompt"></div>
+    <div class="qsub" id="qsub"></div>
+    <div id="ansarea"></div>
+    <div class="gram-wrap">
+      <button class="gram-btn" onclick="tgGram()">📖 Grammar help</button>
+      <div class="gram-panel" id="gpanel">
+        <div class="gram-quick" id="gquick"></div>
+        <button class="expbtn" onclick="tgDeep()">Show full grammar note</button>
+        <div class="gram-deep" id="gdeep"></div>
+      </div>
+    </div>
+  </div>
+  <div class="actrow" id="actrow"></div>
+  <div class="fb" id="fb"></div>
+  <div class="ssrow" id="ssrow">
+    <button class="ssbtn" style="color:var(--ok)" onclick="selfSc('correct')">Got it</button>
+    <button class="ssbtn" style="color:var(--gold)" onclick="selfSc('partial')">Close</button>
+    <button class="ssbtn" style="color:var(--err)" onclick="selfSc('wrong')">Missed</button>
+  </div>
+  <button class="override-btn" id="overrideBtn" onclick="overrideCorrect()">My spelling was close — mark as correct</button>
+  <div class="aifb" id="aifb"></div>
+  <button class="nxtbtn" id="nxtbtn" onclick="nextQ()">Next question</button>
+</div>
+<div class="results" id="results">
+  <div class="res-title" id="restitle"></div>
+  <div class="res-sub" id="ressub"></div>
+  <div class="res-stats">
+    <div><span class="rval" id="rval1"></span><span class="rlbl">Correct</span></div>
+    <div><span class="rval" id="rval2"></span><span class="rlbl">Accuracy</span></div>
+  </div>
+  <div class="goal-win" id="goalwin">Daily goal complete! Come back tomorrow to keep your streak.</div>
+  <div class="bdlist" id="bdlist"></div>
+  <div class="res-btns">
+    <button class="btnback" onclick="backCfg()">New session</button>
+    <button class="btnagain" onclick="startSess()">Same topic again</button>
+  </div>
+</div>
+</div>
+
+<script>
+// ---- ALL VARIABLES DECLARED FIRST ----
+var APIKEY_STORE = 'kok_dari_key';
+var TOPICS = [
+  'Dari Script: alphabet and numbers',
+  'Verb conjugation: present and past stems',
+  'Negation: na and ne forms',
+  'Question words: koja, che, chi, chand',
+  'To be: ast, hastam, nistam',
+  'Want and ability: mekhayum, metanam',
+  'Numbers and counting',
+  'Greetings and courtesy phrases',
+  'Family and people vocabulary',
+  'Work and daily life vocabulary',
+  'Reading comprehension',
+  'Surprise mix of all topics'
+];
+var TYPES = [
+  {k:'surprise', l:'Surprise mix'},
+  {k:'fill_blank', l:'Fill in blank'},
+  {k:'multiple_choice', l:'Multiple choice'},
+  {k:'translation', l:'Translation'},
+  {k:'reading', l:'Reading'},
+  {k:'free_write', l:'Free writing'}
+];
+var todayStr = new Date().toISOString().split('T')[0];
+var selTopic = TOPICS[TOPICS.length - 1];
+var selType = 'surprise';
+var questions = [];
+var qIdx = 0;
+var results = [];
+var answered = false;
+var ST = loadSt();
+
+// ---- FUNCTIONS ----
+function loadSt() {
+  var s = JSON.parse(localStorage.getItem('kok_dari_st') || '{}');
+  if (s.date !== todayStr) { s.tc = 0; s.date = todayStr; }
+  return {streak: s.streak||0, last: s.last||'', tc: s.tc||0, date: todayStr};
+}
+function saveSt() { localStorage.setItem('kok_dari_st', JSON.stringify(ST)); }
+function addCount() {
+  ST.tc += 1;
+  var y = new Date(Date.now()-86400000).toISOString().split('T')[0];
+  if (ST.last !== todayStr) { ST.streak = ST.last===y ? ST.streak+1 : 1; ST.last = todayStr; }
+  saveSt(); refreshUI();
+}
+function refreshUI() {
+  document.getElementById('stk').textContent = ST.streak;
+  document.getElementById('tc').textContent = ST.tc;
+  var pct = Math.min(100, Math.round(ST.tc/10*100));
+  document.getElementById('gfill').style.width = pct + '%';
+  document.getElementById('gcount').textContent = Math.min(ST.tc,10) + '/10';
+  var done = ST.tc >= 10;
+  document.getElementById('goalbar').className = 'goal-bar' + (done ? ' done' : '');
+  document.getElementById('goaldesc').textContent = done ? 'Goal complete!' : 'Complete 10 questions';
+}
+function getKey() {
+  var k = localStorage.getItem(APIKEY_STORE);
+  return (k && k.length > 20) ? k : '';
+}
+function saveKey() {
+  var k = document.getElementById('key-input').value.trim();
+  if (!k || k.length < 20) { alert('Please enter your full API key.'); return; }
+  localStorage.setItem(APIKEY_STORE, k);
+  showApp();
+}
+function resetKey() {
+  if (confirm('Remove your saved API key?')) {
+    localStorage.removeItem(APIKEY_STORE);
+    document.getElementById('key-screen').style.display = 'block';
+    document.getElementById('key-saved').style.display = 'none';
+    document.getElementById('cfg').style.display = 'none';
+    document.getElementById('goalbar').style.display = 'none';
+  }
+}
+function showApp() {
+  document.getElementById('key-screen').style.display = 'none';
+  document.getElementById('key-saved').style.display = 'flex';
+  document.getElementById('goalbar').style.display = 'flex';
+  document.getElementById('cfg').style.display = 'block';
+  buildCfg();
+}
+function buildCfg() {
+  var tg = document.getElementById('tgrid');
+  tg.innerHTML = '';
+  for (var i = 0; i < TOPICS.length; i++) {
+    var t = TOPICS[i];
+    var b = document.createElement('button');
+    b.className = 'tbtn' + (t === selTopic ? ' sel' : '');
+    b.textContent = t;
+    b.setAttribute('data-topic', t);
+    b.onclick = (function(topic, btn) {
+      return function() {
+        if (topic.indexOf('Dari Script') >= 0) { openAlpha(); return; }
+        var all = document.querySelectorAll('.tbtn');
+        for (var j = 0; j < all.length; j++) all[j].classList.remove('sel');
+        btn.classList.add('sel');
+        selTopic = topic;
+      };
+    })(t, b);
+    tg.appendChild(b);
+  }
+  var tr = document.getElementById('trow');
+  tr.innerHTML = '';
+  for (var i = 0; i < TYPES.length; i++) {
+    var type = TYPES[i];
+    var b = document.createElement('button');
+    b.className = 'xbtn' + (type.k === selType ? ' sel' : '');
+    b.textContent = type.l;
+    b.setAttribute('data-key', type.k);
+    b.onclick = (function(key, btn) {
+      return function() {
+        var all = document.querySelectorAll('.xbtn');
+        for (var j = 0; j < all.length; j++) all[j].classList.remove('sel');
+        btn.classList.add('sel');
+        selType = key;
+      };
+    })(type.k, b);
+    tr.appendChild(b);
+  }
+}
+
+
+// ---- ALPHABET DATA ----
+var DARI_ALPHABET = [
+  {letter:'ا', name:'Alef', sound:'a / aa'},
+  {letter:'ب', name:'Be', sound:'b'},
+  {letter:'پ', name:'Pe', sound:'p'},
+  {letter:'ت', name:'Te', sound:'t'},
+  {letter:'ث', name:'Se', sound:'s'},
+  {letter:'ج', name:'Jim', sound:'j'},
+  {letter:'چ', name:'Che', sound:'ch'},
+  {letter:'ح', name:'He-jimi', sound:'h'},
+  {letter:'خ', name:'Khe', sound:'kh'},
+  {letter:'د', name:'Dal', sound:'d'},
+  {letter:'ذ', name:'Zal', sound:'z'},
+  {letter:'ر', name:'Re', sound:'r'},
+  {letter:'ز', name:'Ze', sound:'z'},
+  {letter:'ژ', name:'Zhe', sound:'zh'},
+  {letter:'س', name:'Sin', sound:'s'},
+  {letter:'ش', name:'Shin', sound:'sh'},
+  {letter:'ص', name:'Sad', sound:'s'},
+  {letter:'ض', name:'Zad', sound:'z'},
+  {letter:'ط', name:'Ta', sound:'t'},
+  {letter:'ظ', name:'Za', sound:'z'},
+  {letter:'ع', name:'Ain', sound:'a (guttural)'},
+  {letter:'غ', name:'Ghain', sound:'gh'},
+  {letter:'ف', name:'Fe', sound:'f'},
+  {letter:'ق', name:'Qaf', sound:'q'},
+  {letter:'ک', name:'Kaf', sound:'k'},
+  {letter:'گ', name:'Gaf', sound:'g'},
+  {letter:'ل', name:'Lam', sound:'l'},
+  {letter:'م', name:'Mim', sound:'m'},
+  {letter:'ن', name:'Nun', sound:'n'},
+  {letter:'و', name:'Waw', sound:'w / u'},
+  {letter:'ه', name:'He', sound:'h'},
+  {letter:'ی', name:'Ye', sound:'y / i'}
+];
+var DARI_NUMBERS = [
+  {script:'۰', latin:'0', word:'sifr'},
+  {script:'۱', latin:'1', word:'yak'},
+  {script:'۲', latin:'2', word:'du'},
+  {script:'۳', latin:'3', word:'se'},
+  {script:'۴', latin:'4', word:'chaar'},
+  {script:'۵', latin:'5', word:'panj'},
+  {script:'۶', latin:'6', word:'shash'},
+  {script:'۷', latin:'7', word:'haft'},
+  {script:'۸', latin:'8', word:'hasht'},
+  {script:'۹', latin:'9', word:'noh'}
+];
+var flashIdx = 0;
+var flashFlipped = false;
+
+function openAlpha() {
+  document.getElementById('cfg').style.display = 'none';
+  document.getElementById('alphaScreen').style.display = 'block';
+  flashIdx = 0;
+  renderFlash();
+  renderAlphaChart();
+  renderNumbers();
+}
+
+function closeAlpha() {
+  document.getElementById('alphaScreen').style.display = 'none';
+  document.getElementById('cfg').style.display = 'block';
+}
+
+function switchAlphaTab(tab) {
+  var views = document.querySelectorAll('.alpha-view');
+  for (var i = 0; i < views.length; i++) views[i].classList.remove('on');
+  var tabs = document.querySelectorAll('.alpha-tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('on');
+  document.getElementById('alpha-' + tab).classList.add('on');
+  var tabBtns = document.querySelectorAll('.alpha-tab');
+  var idx = ['flash','chart','nums'].indexOf(tab);
+  if (tabBtns[idx]) tabBtns[idx].classList.add('on');
+}
+
+function renderFlash() {
+  var item = DARI_ALPHABET[flashIdx];
+  document.getElementById('flashLetter').textContent = item.letter;
+  document.getElementById('flashName').textContent = item.name;
+  document.getElementById('flashSound').textContent = 'Sound: ' + item.sound;
+  document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + DARI_ALPHABET.length;
+}
+
+function flipFlash() {
+  // Just advance to next on click — simple mode
+  moveFlash(1);
+}
+
+function moveFlash(dir) {
+  flashIdx = (flashIdx + dir + DARI_ALPHABET.length) % DARI_ALPHABET.length;
+  renderFlash();
+}
+
+function renderAlphaChart() {
+  var grid = document.getElementById('alphaGrid');
+  grid.innerHTML = '';
+  for (var i = 0; i < DARI_ALPHABET.length; i++) {
+    var item = DARI_ALPHABET[i];
+    var cell = document.createElement('div');
+    cell.className = 'alpha-cell';
+    cell.innerHTML = '<div class="ac-letter">' + item.letter + '</div><div class="ac-name">' + item.name + '</div><div class="ac-sound">' + item.sound + '</div>';
+    grid.appendChild(cell);
+  }
+}
+
+function renderNumbers() {
+  var grid = document.getElementById('numGrid');
+  grid.innerHTML = '';
+  for (var i = 0; i < DARI_NUMBERS.length; i++) {
+    var item = DARI_NUMBERS[i];
+    var cell = document.createElement('div');
+    cell.className = 'num-cell';
+    cell.innerHTML = '<div class="nc-script">' + item.script + '</div><div class="nc-latin">' + item.latin + '</div><div class="nc-word">' + item.word + '</div>';
+    grid.appendChild(cell);
+  }
+}
+
+// ---- INIT: check for saved key ----
+refreshUI();
+if (getKey()) {
+  showApp();
+}
+// else key-screen is already visible by default
+
+// ---- SESSION ----
+var LMSGS = ['Generating your questions...', 'Building exercises...', 'Almost ready...'];
+
+function startSess() {
+  var key = getKey();
+  if (!key) { alert('No API key found. Please reset and re-enter your key.'); return; }
+  document.getElementById('cfg').style.display = 'none';
+  document.getElementById('session').style.display = 'none';
+  document.getElementById('results').classList.remove('on');
+  document.getElementById('errmsg').classList.remove('on');
+  var ld = document.getElementById('loading'); ld.classList.add('on');
+  var mi = 0;
+  var ml = document.getElementById('loadmsg');
+  var iv = setInterval(function() { mi = (mi+1) % LMSGS.length; ml.textContent = LMSGS[mi]; }, 1800);
+
+  var prompt = buildPrompt();
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1000,
+      messages: [{role: 'user', content: prompt}]
+    })
+  }).then(function(resp) {
+    clearInterval(iv);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  }).then(function(data) {
+    var raw = data.content.map(function(b) { return b.text || ''; }).join('');
+    var clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+    var start = clean.indexOf('[');
+    var end = clean.lastIndexOf(']');
+    if (start === -1 || end === -1) throw new Error('no array found');
+    clean = clean.slice(start, end + 1);
+    clean = clean.replace(/[“”]/g, '"');
+    clean = clean.replace(/[‘’]/g, "'");
+    try {
+      questions = JSON.parse(clean);
+    } catch(parseErr) {
+      var objMatches = clean.match(/\{[^\{\}]*\}/g);
+      if (!objMatches || objMatches.length === 0) throw new Error('cannot parse');
+      questions = [];
+      for (var i = 0; i < objMatches.length; i++) {
+        try { questions.push(JSON.parse(objMatches[i])); } catch(e2) {}
+      }
+      if (questions.length === 0) throw new Error('no valid questions');
+    }
+    if (!questions.length) throw new Error('empty');
+    qIdx = 0; results = [];
+    document.getElementById('loading').classList.remove('on');
+    document.getElementById('session').style.display = 'block';
+    renderQ();
+  }).catch(function(e) {
+    clearInterval(iv);
+    document.getElementById('loading').classList.remove('on');
+    document.getElementById('cfg').style.display = 'block';
+    document.getElementById('errmsg').classList.add('on');
+    console.error(e);
+  });
+}
+
+function buildPrompt() {
+  var ti = selType === 'surprise'
+    ? 'Use a varied mix of fill_blank, multiple_choice, translation, reading, and free_write across the 10 questions.'
+    : 'All 10 questions use type: "' + selType + '"';
+  var top = (selTopic.indexOf('Surprise') >= 0 || selTopic.indexOf('mix') >= 0)
+    ? 'Mix of A2+ to B1 Dari grammar topics.'
+    : 'Focus on: ' + selTopic;
+  return 'You are a Dari language teacher. The learner is A2+ aiming for B1. They have Pimsleur audio background but weak grammar. Focus on practical Afghan Dari for work and community.\n\nCRITICAL: ALL Dari words MUST use Latin transliteration only. NO Dari script, NO Arabic letters anywhere in output. Write Dari words like: salaam, tashakor, khub, mekhayum, raftan, koja, chi, nistam. The learner cannot read Dari script.\n\n' + top + '\n' + ti + '\n\nGenerate exactly 10 questions as a JSON array. Each item:\n{"type":"fill_blank|multiple_choice|translation|reading|free_write","topic":"short English label","passage":"for reading: Dari text in Latin transliteration only. Empty string for others.","prompt":"question using Latin transliteration only, use ___ for blanks","sub":"English instruction","correct":"answer in Latin transliteration","options":["A","B","C","D"] or [],"explanation":"why correct","grammar_quick":"one sentence on this form","grammar_deep":"explanation with examples as TR: Latin transliteration | EN: English"}\n\nReturn ONLY the raw JSON array. No markdown. No Dari script. No apostrophes in JSON values.';
+}
+
+function renderQ() {
+  if (qIdx >= questions.length) { showRes(); return; }
+  answered = false;
+  var q = questions[qIdx];
+  document.getElementById('spfill').style.width = Math.round(qIdx/questions.length*100) + '%';
+  document.getElementById('sctr').textContent = (qIdx+1) + '/' + questions.length;
+  document.getElementById('qcard').className = 'qcard';
+  var tl = {fill_blank:'Fill in blank', multiple_choice:'Multiple choice', translation:'Translation', reading:'Reading', free_write:'Free writing'};
+  document.getElementById('qtype').textContent = tl[q.type] || q.type;
+  document.getElementById('qtag').textContent = q.topic;
+  var pass = document.getElementById('passage');
+  if (q.passage) { pass.textContent = q.passage; pass.className = 'passage on'; }
+  else { pass.className = 'passage'; pass.textContent = ''; }
+  var pr = document.getElementById('qprompt');
+  if (q.type === 'fill_blank') {
+    pr.innerHTML = q.prompt.replace('___', '<span class="blank"></span>');
+  } else {
+    pr.textContent = q.prompt;
+  }
+  document.getElementById('qsub').textContent = q.sub || '';
+  document.getElementById('gpanel').classList.remove('on');
+  document.getElementById('gdeep').classList.remove('on');
+  document.querySelector('.expbtn').textContent = 'Show full grammar note';
+  document.getElementById('gquick').textContent = q.grammar_quick || '';
+  renderDeep(q.grammar_deep || '');
+  var aa = document.getElementById('ansarea'); aa.innerHTML = '';
+  var ar = document.getElementById('actrow'); ar.innerHTML = '';
+  document.getElementById('fb').className = 'fb'; document.getElementById('fb').innerHTML = '';
+  document.getElementById('ssrow').className = 'ssrow';
+  document.getElementById('aifb').className = 'aifb';
+  document.getElementById('nxtbtn').className = 'nxtbtn';
+  var ob = document.getElementById('overrideBtn'); if (ob) ob.className = 'override-btn';
+
+  if (q.type === 'fill_blank' || q.type === 'translation' || q.type === 'reading') {
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'finput'; inp.id = 'mi';
+    inp.placeholder = q.type === 'translation' ? 'Write in Dari (transliteration)...' : 'Your answer...';
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') chk(); });
+    aa.appendChild(inp); setTimeout(function() { inp.focus(); }, 80);
+    mkBtn(ar, 'Check', chk, false);
+    if (q.type !== 'fill_blank') mkBtn(ar, 'Reveal answer', revAns, true);
+  } else if (q.type === 'multiple_choice') {
+    var wrap = document.createElement('div'); wrap.className = 'mcopts';
+    var opts = q.options || [];
+    for (var i = 0; i < opts.length; i++) {
+      (function(opt, idx) {
+        var b = document.createElement('button'); b.className = 'mcopt';
+        var letter = document.createElement('span'); letter.className = 'mcletter';
+        letter.textContent = ['A','B','C','D'][idx];
+        b.appendChild(letter);
+        b.appendChild(document.createTextNode(opt));
+        b.dataset.v = opt;
+        b.onclick = function() { handleMC(b, opt, q.correct, q); };
+        wrap.appendChild(b);
+      })(opts[i], i);
+    }
+    aa.appendChild(wrap);
+  } else {
+    var ta = document.createElement('textarea'); ta.className = 'winput'; ta.id = 'mi';
+    ta.placeholder = 'Write in Dari (transliteration)...'; aa.appendChild(ta);
+    setTimeout(function() { ta.focus(); }, 80);
+    mkBtn(ar, 'Get Feedback', getAIFb, false);
+    mkBtn(ar, 'Show model answer', revAns, true);
+  }
+}
+
+function mkBtn(par, txt, fn, sec) {
+  var b = document.createElement('button');
+  b.className = sec ? 'revbtn' : 'chkbtn';
+  b.textContent = txt; b.onclick = fn; par.appendChild(b);
+}
+
+function renderDeep(text) {
+  var el = document.getElementById('gdeep');
+  if (!text) { el.innerHTML = ''; return; }
+  var lines = text.split('\n');
+  var html = '';
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (l.indexOf('TR:') >= 0 && l.indexOf('EN:') >= 0) {
+      var p = l.split('|');
+      var tr = (p[0] || '').replace('TR:', '').trim();
+      var en = (p[1] || '').replace('EN:', '').trim();
+      html += '<div class="exrow"><span class="tr">' + tr + '</span><span class="en">' + en + '</span></div>';
+    } else if (l.trim()) {
+      html += '<p style="margin-bottom:5px">' + l + '</p>';
+    }
+  }
+  el.innerHTML = html;
+}
+
+function tgGram() { document.getElementById('gpanel').classList.toggle('on'); }
+function tgDeep() {
+  var d = document.getElementById('gdeep'); d.classList.toggle('on');
+  document.querySelector('.expbtn').textContent = d.classList.contains('on') ? 'Hide grammar note' : 'Show full grammar note';
+}
+
+function chk() {
+  if (answered) return;
+  var q = questions[qIdx];
+  var inp = document.getElementById('mi');
+  if (!inp || !inp.value.trim()) return;
+  if (q.type === 'translation' || q.type === 'reading') { revSelf(inp.value.trim(), q); return; }
+  answered = true; inp.disabled = true;
+  var u = inp.value.trim().toLowerCase();
+  var c = (q.correct || '').toLowerCase().trim();
+  var parts = c.split('/');
+  var ok = u === c;
+  for (var i = 0; i < parts.length; i++) { if (parts[i].trim() === u) ok = true; }
+  if (u.length > 2 && c.indexOf(u) >= 0) ok = true;
+  inp.className = 'finput ' + (ok ? 'ok' : 'bad');
+  document.getElementById('qcard').className = 'qcard ' + (ok ? 'ok' : 'bad');
+  showFb(ok, q.correct, q.explanation);
+  rec(ok ? 'correct' : 'wrong', q);
+  document.getElementById('nxtbtn').className = 'nxtbtn on';
+}
+
+function handleMC(btn, chosen, correct, q) {
+  if (answered) return; answered = true;
+  var all = document.querySelectorAll('.mcopt');
+  for (var i = 0; i < all.length; i++) {
+    all[i].disabled = true;
+    if (all[i].dataset.v === correct) all[i].classList.add('ok');
+    else if (all[i] === btn && chosen !== correct) all[i].classList.add('bad');
+  }
+  var ok = chosen === correct;
+  document.getElementById('qcard').className = 'qcard ' + (ok ? 'ok' : 'bad');
+  showFb(ok, correct, q.explanation);
+  rec(ok ? 'correct' : 'wrong', q);
+  document.getElementById('nxtbtn').className = 'nxtbtn on';
+}
+
+function revAns() {
+  if (answered) return; answered = true;
+  var q = questions[qIdx];
+  var inp = document.getElementById('mi'); if (inp) inp.disabled = true;
+  var fb = document.getElementById('fb'); fb.className = 'fb neu';
+  fb.innerHTML = 'Answer: <div class="fb-ans">' + q.correct + '</div>' + (q.explanation ? '<div class="fb-exp">' + q.explanation + '</div>' : '');
+  document.getElementById('ssrow').className = 'ssrow on';
+  document.getElementById('qcard').className = 'qcard bad';
+}
+
+function revSelf(uval, q) {
+  answered = true;
+  var inp = document.getElementById('mi'); if (inp) inp.disabled = true;
+  var fb = document.getElementById('fb'); fb.className = 'fb neu';
+  fb.innerHTML = '<div style="font-style:italic;font-size:.8rem;margin-bottom:4px">Model answer:</div><div class="fb-ans">' + q.correct + '</div>' + (q.explanation ? '<div class="fb-exp">' + q.explanation + '</div>' : '');
+  document.getElementById('ssrow').className = 'ssrow on';
+}
+
+function selfSc(out) {
+  rec(out, questions[qIdx]);
+  document.getElementById('ssrow').className = 'ssrow';
+  document.getElementById('qcard').className = 'qcard ' + (out === 'correct' ? 'ok' : 'bad');
+  document.getElementById('nxtbtn').className = 'nxtbtn on';
+}
+
+function getAIFb() {
+  if (answered) return;
+  var inp = document.getElementById('mi');
+  if (!inp || !inp.value.trim()) return;
+  answered = true; inp.disabled = true;
+  var cb = document.querySelector('.chkbtn');
+  if (cb) { cb.disabled = true; cb.textContent = 'Evaluating...'; }
+  var q = questions[qIdx];
+  var userText = inp.value.trim();
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': getKey(),
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1000,
+      messages: [{role: 'user', content: 'Evaluate this Dari free-write for an A2+/B1 learner.\nTask: "' + q.prompt + '"\nLearner: "' + userText + '"\nModel: "' + q.correct + '"\nRespond ONLY with JSON: {"score":1-5,"feedback":"2-3 sentences","tip":"one short tip"}'}]
+    })
+  }).then(function(r) {
+    return r.json();
+  }).then(function(d) {
+    var raw = d.content.map(function(b) { return b.text || ''; }).join('');
+    var ev = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    var af = document.getElementById('aifb'); af.className = 'aifb on';
+    af.innerHTML = '<div class="aiscore">Score: ' + ev.score + '/5</div><div>' + ev.feedback + '</div><div class="aitip">Tip: ' + ev.tip + '</div>';
+    rec(ev.score >= 4 ? 'correct' : ev.score >= 2 ? 'partial' : 'wrong', q);
+    document.getElementById('nxtbtn').className = 'nxtbtn on';
+  }).catch(function() {
+    revSelf(userText, q);
+    document.getElementById('nxtbtn').className = 'nxtbtn on';
+  });
+}
+
+function showFb(ok, correct, exp) {
+  var fb = document.getElementById('fb');
+  fb.className = ok ? 'fb ok' : 'fb bad';
+  fb.innerHTML = ok
+    ? 'Correct' + (exp ? '<div class="fb-exp">' + exp + '</div>' : '')
+    : 'Wrong. Answer: <div class="fb-ans">' + correct + '</div>' + (exp ? '<div class="fb-exp">' + exp + '</div>' : '');
+  var ob = document.getElementById('overrideBtn');
+  if (ob) ob.className = ok ? 'override-btn' : 'override-btn show';
+}
+
+function overrideCorrect() {
+  var ob = document.getElementById('overrideBtn');
+  if (ob) ob.className = 'override-btn';
+  document.getElementById('qcard').className = 'qcard ok';
+  document.getElementById('fb').className = 'fb ok';
+  document.getElementById('fb').innerHTML = 'Marked correct';
+  if (results.length > 0) results[results.length - 1].out = 'correct';
+}
+
+function rec(out, q) {
+  results.push({out: out, topic: q.topic, prompt: q.prompt});
+  addCount();
+}
+
+function nextQ() { qIdx++; renderQ(); }
+
+function showRes() {
+  document.getElementById('session').style.display = 'none';
+  var ok = results.filter(function(r) { return r.out === 'correct'; }).length;
+  var par = results.filter(function(r) { return r.out === 'partial'; }).length;
+  var tot = results.length;
+  var sc = ok + Math.round(par * 0.5);
+  var acc = Math.round(sc / tot * 100);
+  document.getElementById('restitle').textContent = acc >= 90 ? 'Excellent' : acc >= 70 ? 'Good Work' : acc >= 50 ? 'Keep Going' : 'Keep Practicing';
+  document.getElementById('ressub').textContent = selTopic;
+  document.getElementById('rval1').textContent = ok + '/' + tot;
+  document.getElementById('rval2').textContent = acc + '%';
+  document.getElementById('goalwin').className = 'goal-win' + (ST.tc >= 10 ? ' on' : '');
+  var bd = document.getElementById('bdlist'); bd.innerHTML = '';
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    var cls = r.out === 'correct' ? 'c' : r.out === 'partial' ? 'p' : 'w';
+    var label = r.out === 'correct' ? 'Correct' : r.out === 'partial' ? 'Close' : 'Missed';
+    var q_text = r.prompt.length > 58 ? r.prompt.slice(0, 55) + '...' : r.prompt;
+    bd.innerHTML += '<div class="bditem"><span class="bdres ' + cls + '">' + label + '</span><span class="bdq">' + q_text + '</span><span style="font-size:.7rem;color:var(--dim)">' + r.topic + '</span></div>';
+  }
+  document.getElementById('results').classList.add('on');
+}
+
+function backCfg() {
+  document.getElementById('results').classList.remove('on');
+  document.getElementById('cfg').style.display = 'block';
+  buildCfg();
+}
+</script>
+</body>
+</html>
